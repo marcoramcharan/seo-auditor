@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>seo-auditor | Project Outline</title>
+<meta name="description" content="Project outline for seo-auditor, a Node.js tool that crawls a locally served site and audits links, canonicals, meta descriptions, technical SEO and internal link clusters.">
+<style>
+  :root { --bg:#0f1115; --fg:#e8eaf0; --muted:#9aa3b2; --card:#181b22; --accent:#5eead4; --line:#2a2f3a; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#fafafa; --fg:#14171c; --muted:#5b6472; --card:#fff; --accent:#0f766e; --line:#e3e6eb; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:48px 20px 80px; }
+  h1 { font-size:2.2rem; margin:0 0 4px; }
+  h1 span { color:var(--accent); }
+  .tag { color:var(--muted); margin:0 0 32px; }
+  h2 { margin:40px 0 12px; font-size:1.25rem; border-bottom:1px solid var(--line); padding-bottom:6px; }
+  ol.steps { list-style:none; counter-reset:s; padding:0; margin:0; }
+  ol.steps li { counter-increment:s; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px 14px 56px; margin-bottom:10px; position:relative; }
+  ol.steps li::before { content:counter(s); position:absolute; left:16px; top:14px; width:28px; height:28px; border-radius:50%; background:var(--accent); color:#0f1115; font-weight:700; display:grid; place-items:center; }
+  ol.steps li strong { display:block; }
+  ol.steps li small { color:var(--muted); }
+  ul { padding-left:20px; }
+  code { background:var(--card); border:1px solid var(--line); padding:1px 6px; border-radius:5px; font-size:.9em; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; overflow:auto; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; }
+  tr:last-child td { border-bottom:0; }
+</style>
+</head>
+<body>
+<main>
+  <h1><span>seo</span>-auditor</h1>
+  <p class="tag">A Node.js tool that crawls a locally hosted site and audits its SEO health.</p>
+
+  <h2>The plan</h2>
+  <ol class="steps">
+    <li><strong>Get a site</strong><small>Pick the site to audit. Copy it onto the desktop and serve it locally (for example <code>npx serve ~/Desktop/site</code>).</small></li>
+    <li><strong>Crawl it locally with Node.js</strong><small>Start at the local server root and follow internal links only.</small></li>
+    <li><strong>Collect all page paths</strong><small>Gather every <code>/index.html</code> page path found, then list those paths as the master page inventory.</small></li>
+    <li><strong>Check for broken links</strong><small>Test every internal and external link, flag 404s, 5xx and redirect chains.</small></li>
+    <li><strong>Check canonicals</strong><small>Verify each page has a <code>&lt;link rel="canonical"&gt;</code>, it is absolute, self-referencing where expected, and not pointing at a broken page.</small></li>
+    <li><strong>Check meta descriptions</strong><small>Missing, duplicate, too short or too long (aim for roughly 70 to 160 characters).</small></li>
+    <li><strong>Check technical SEO</strong><small>Title tags, H1 count, <code>lang</code>, viewport, robots meta, image alt text, sitemap.xml, robots.txt, structured data.</small></li>
+    <li><strong>Analyse link clusters</strong><small>Find which pages have strong internal linking, which are orphans, and which are weakly linked.</small></li>
+  </ol>
+
+  <h2>Checks at a glance</h2>
+  <table>
+    <thead><tr><th>Check</th><th>What it looks for</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td>Page paths</td><td>All discovered <code>/index.html</code> pages</td><td>Path list</td></tr>
+      <tr><td>Broken links</td><td>Non-2xx responses, redirect chains</td><td>Link, source page, status</td></tr>
+      <tr><td>Canonicals</td><td>Missing, relative, mismatched, duplicated</td><td>Per-page verdict</td></tr>
+      <tr><td>Meta descriptions</td><td>Missing, duplicate, bad length</td><td>Per-page verdict</td></tr>
+      <tr><td>Technical SEO</td><td>Titles, H1, alt text, robots, sitemap</td><td>Issue list by severity</td></tr>
+      <tr><td>Link clusters</td><td>Inbound and outbound internal links, orphans</td><td>Ranked pages</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Suggested structure</h2>
+<pre>seo-auditor/
+  package.json
+  src/
+    crawl.js        # fetch pages, extract links, build the page graph
+    checks/
+      links.js      # broken links
+      canonical.js  # canonical tags
+      meta.js       # meta descriptions and titles
+      technical.js  # other technical SEO checks
+      clusters.js   # internal link graph analysis
+    report.js       # write results to JSON and HTML
+  reports/</pre>
+
+  <h2>Tooling ideas</h2>
+  <ul>
+    <li><code>fetch</code> (built into Node) for requests</li>
+    <li><code>cheerio</code> for parsing HTML</li>
+    <li><code>p-limit</code> to keep the crawl polite and concurrent</li>
+  </ul>
+
+  <h2>Next step</h2>
+  <p>Scaffold the project with <code>npm init</code>, then build <code>crawl.js</code> first, since every other check depends on the crawled page graph.</p>
+</main>
+</body>
+</html>
